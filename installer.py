@@ -1,5 +1,5 @@
 # coding:utf-8
-from __future__ import unicode_literals, division, print_function
+from __future__ import unicode_literals, division, print_function, absolute_import
 
 __author__ = 'timmyliang'
 __email__ = '820472580@qq.com'
@@ -112,8 +112,6 @@ class ProgressDialog(tk.Toplevel):
 class MainApplication(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
-
-        self.DIR = os.path.dirname(__file__)
 
         self.parent = parent
         parent.title("软件自动安装工具")
@@ -230,20 +228,26 @@ class MainApplication(tk.Frame):
 
     def install_QTTabBar(self):
         command = ""
-        QTTabBar_dir = os.path.join(self.DIR,"software","QTTabBar").replace("/","\\")
-        # program_dir = os.path.join(QTTabBar_dir,"QTTabBar.exe")
-        # command += '"%s" /QI & ' % program_dir
-        # program_dir = os.path.join(QTTabBar_dir,"UpdateQTTabBar1040.exe")
-        # command += '"%s" /QI & ' % program_dir
+        DIR = os.path.dirname(os.path.abspath(__file__))
+        QTTabBar_dir = os.path.join(DIR, "software", "QTTabBar").replace("/", "\\")
+        program_dir = os.path.join(QTTabBar_dir, "QTTabBar.exe")
+        command += '"%s" /QI & ' % program_dir
+        command += 'ping 127.0.0.1 -n 3 > nul & ' 
+        program_dir = os.path.join(QTTabBar_dir, "UpdateQTTabBar1040.exe")
+        command += '"%s" /QI & ' % program_dir
+        command += 'ping 127.0.0.1 -n 3 > nul & ' 
 
         # NOTE 复制文件
-        QTTabBar_install_dir = os.path.join(os.environ["ProgramFiles"],"QTTabBar").replace("/","\\")
-        
-        command += r'copy "%s\*.xml" "%s\" /y & ' % (QTTabBar_dir,QTTabBar_install_dir)
+        QTTabBar_install_dir = os.path.join(
+            os.environ["ProgramFiles"], "QTTabBar").replace("/", "\\")
 
-        # script = os.path.join(QTTabBar_dir,"launch.js")
-        # command += 'cscript "%s" & ' % script
-        
+        command += r'copy "%s\*.xml" "%s\" /y & ' % (
+            QTTabBar_dir, QTTabBar_install_dir)
+        command += 'ping 127.0.0.1 -n 3 > nul & ' 
+
+        script = os.path.join(QTTabBar_dir, "launch.js")
+        command += 'cscript "%s" & ' % script
+
         return command
 
     def install_software(self):
@@ -255,9 +259,9 @@ class MainApplication(tk.Frame):
 
         # command = 'mshta vbscript:msgbox("我是提示内容",64,"我是提示标题")(window.close) & mshta vbscript:msgbox("我是提示内容123131",64,"我是提示标题")(window.close) & '
         command = '/c "%s"' % command
-        print("command",command)
+        print("command", command)
         result = ctypes.windll.shell32.ShellExecuteW(
-            None, u"runas", unicode(cmd_exe), unicode(command), None, 1)
+            None, u"runas", cmd_exe, command, None, 1)
 
         # NOTE 返回 5 说明没有提供权限
         if result == 5:

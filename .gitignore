@@ -5,3 +5,6 @@
 
 # software/
 
+build/
+dist/
+*.spec
