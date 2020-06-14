@@ -35,7 +35,6 @@ def take_parm(kwargs, key, default=None):
         del kwargs[key]
     return res
 
-
 class SelectPathWidget(tk.Frame):
     def __init__(self, *args, **kwargs):
         label_text = take_parm(kwargs, "label_text", "")
