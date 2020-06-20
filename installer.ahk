@@ -60,11 +60,6 @@ Button自动安装:
         install_VScode()
     }
     
-    if (ScreenToGif = 1){
-        install_ScreenToGif()
-    }
-    
-    
     if (Listary = 1){
         install_Listary()
     }
@@ -81,6 +76,10 @@ Button自动安装:
         install_Ditto()
     }
     
+    if (ScreenToGif = 1){
+        install_ScreenToGif()
+    }
+
     if (Quicker = 1){
         install_Quicker()
     }
@@ -135,21 +134,6 @@ install_WGesture(){
 
 }
 
-; Quicker 安装操作
-install_Quicker(){
-    install_path := A_ScriptDir "\software\Quicker.x64.1.8.0.0.msi"
-
-    ; 判断安装包是否存在
-    if !FileExist(install_path){
-        MsgBox, "Quicker.x64.1.8.0.0.msi not exists"
-        return
-    }
-
-    install_cmd := install_path " /passive" 
-    Run, %install_cmd%
-    ToolTip, 安装 Quicker
-}
-
 ; Ditto 安装操作
 install_Ditto(){
     install_path := A_ScriptDir "\software\DittoSetup_64bit_3_22_88_0.exe"
@@ -192,7 +176,37 @@ install_ScreenToGif(){
 
     install_cmd := install_path " /passive" 
     Run, %install_cmd%
-    ToolTip, 安装 ScreenToGif
+    Loop {
+        ToolTip, 安装 ScreenToGif
+        sleep 500
+        result := WinExist("ahk_exe msiexec.exe")
+        if (!result){
+            break
+        }
+    }
+
+}
+
+; Quicker 安装操作
+install_Quicker(){
+    install_path := A_ScriptDir "\software\Quicker.x64.1.8.0.0.msi"
+
+    ; 判断安装包是否存在
+    if !FileExist(install_path){
+        MsgBox, "Quicker.x64.1.8.0.0.msi not exists"
+        return
+    }
+
+    install_cmd := install_path " /passive" 
+    Run, %install_cmd%
+    Loop {
+        ToolTip, 安装 Quicker
+        sleep 500
+        result := WinExist("ahk_exe msiexec.exe")
+        if (!result){
+            break
+        }
+    }
 }
 
 ; 腾讯桌面管理 安装操作
