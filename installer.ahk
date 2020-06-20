@@ -29,7 +29,8 @@ Gui Add, CheckBox, x143 y176 w102 h23 +Checked vPotPlayer, Pot Player
 ; Gui Add, Button, x208 y214 w45 h27, 选择
 Gui Add, Button, x8 y222 w248 h23, 自动安装
 
-Gui Show, w260 h252, 自动安装 - 界面
+Gui +AlwaysOnTop
+Gui Show , w260 h252 , 自动安装 - 界面
 ; 设置默认安装路径
 ; GuiControl,, PathSelector, %A_ScriptDir%
 Return
@@ -41,36 +42,10 @@ GuiClose:
 
 Button自动安装:
     Gui, Submit ,NoHide   ; Save each control's contents to its associated variable.
-    
-    ; Run, explorer.exe
-
-    
-    if (Snipaste = 1){
-        install_Snipaste()
-    }
+    SetTitleMatchMode, 1
     
     if (QTTabBar = 1){
         install_QTTabBar()
-    }
-
-    if (Ditto = 1){
-        install_Ditto()
-    }
-    
-    if (Quicker = 1){
-        install_Quicker()
-    }
-    
-    if (TencentDesktop = 1){
-        install_TencentDesktop()
-    }
-    
-    if (VScode = 1){
-        install_VScode()
-    }
-    
-    if (ScreenToGif = 1){
-        install_ScreenToGif()
     }
     
     if (PotPlayer = 1){
@@ -81,11 +56,37 @@ Button自动安装:
         install_WGesture()
     }
 
+    if (VScode = 1){
+        install_VScode()
+    }
+    
+    if (ScreenToGif = 1){
+        install_ScreenToGif()
+    }
+    
+    
     if (Listary = 1){
         install_Listary()
     }
 
-    return
+    if (Snipaste = 1){
+        install_Snipaste()
+    }
+    
+    if (TencentDesktop = 1){
+        install_TencentDesktop()
+    }
+
+    if (Ditto = 1){
+        install_Ditto()
+    }
+    
+    if (Quicker = 1){
+        install_Quicker()
+    }
+
+    MsgBox, 262144, 恭喜你, 安装完成, 3
+    ExitApp
 
 Button选择:
     FileSelectFolder, Installation_Path, , 3
@@ -105,6 +106,7 @@ install_Listary(){
 
     install_cmd := install_path " /VERYSILENT" 
     Run, %install_cmd%
+    ToolTip, 安装 listary
 }
 
 ; WGesture 安装操作
@@ -119,9 +121,18 @@ install_WGesture(){
 
     install_cmd := install_path " /passive" 
     Run, %install_cmd%
-    WinWait, 安全警告, , 3
-    ControlClick, 是 , 安全警告
-    SendInput,  {Y}
+    
+    Loop {
+        result := WinExist("安全警告")
+        ToolTip, 等待 WGesture 安装
+
+        sleep 500
+        if (result){
+            SendInput,  {Y}
+            break
+        }
+    }
+
 }
 
 ; Quicker 安装操作
@@ -136,6 +147,7 @@ install_Quicker(){
 
     install_cmd := install_path " /passive" 
     Run, %install_cmd%
+    ToolTip, 安装 Quicker
 }
 
 ; Ditto 安装操作
@@ -150,6 +162,7 @@ install_Ditto(){
 
     install_cmd := install_path " /VERYSILENT" 
     Run, %install_cmd%
+    ToolTip, 安装 Ditto
 }
 
 ; VScode 安装操作
@@ -164,6 +177,7 @@ install_VScode(){
 
     install_cmd := install_path " /VERYSILENT" 
     Run, %install_cmd%
+    ToolTip, 安装 VScode
 }
 
 ; ScreenToGif 安装操作
@@ -178,6 +192,7 @@ install_ScreenToGif(){
 
     install_cmd := install_path " /passive" 
     Run, %install_cmd%
+    ToolTip, 安装 ScreenToGif
 }
 
 ; 腾讯桌面管理 安装操作
@@ -192,6 +207,7 @@ install_TencentDesktop(){
 
     install_cmd := install_path
     Run, %install_cmd%
+    ToolTip, 安装 腾讯桌面管理
 }
 
 ; PotPlayer 安装操作
@@ -203,13 +219,13 @@ install_PotPlayer(){
         MsgBox, "PotPlayerSetup64-200512-ads.exe not exists"
         return
     }
+    ToolTip, 解压 PotPlayer 安装包
 
     install_cmd := install_path
     Run, %install_cmd%
     WinWait, Installer Language, , 3
     SendInput,{Enter}
     ; ControlClick, OK , Installer Language
-    SetTitleMatchMode, 1
     Sleep, 2000
     WinWait, PotPlayer-64 bit 安装
     SendInput,{Enter}
@@ -224,6 +240,7 @@ install_PotPlayer(){
     ; ; 等待 关闭 按钮激活
     ; Sleep, 2000
     while (WinExist(PotPlayer-64 bit 安装)) {
+        ToolTip, 等待 PotPlayer 安装
         Sleep, 500
         ; ControlGet, button_enable, Visible ,,  ClassNN Button2
         ControlClick, 关闭 , PotPlayer-64 bit 安装
@@ -276,6 +293,9 @@ install_QTTabBar(){
     QTTabBar_exe := A_ScriptDir "\software\QTTabBar\QTTabBar.exe"
     update_exe := A_ScriptDir "\software\QTTabBar\UpdateQTTabBar1040.exe"
 
+    ToolTip, 等待 QTTabBar 安装
+
+
     ; 启动程序进行安装
     Run, %QTTabBar_exe% , , , OutputVarPID
     WinWait ahk_pid %OutputVarPID%
@@ -286,6 +306,7 @@ install_QTTabBar(){
     button_enable := 0
     while (button_enable = 0) {
         Sleep, 100
+        ToolTip, 等待 QTTabBar 安装
         ControlGet, button_enable, Enabled ,, Exit
     }
 
@@ -304,20 +325,23 @@ install_QTTabBar(){
     button_enable := 0
     while (button_enable = 0) {
         Sleep, 200
+        ToolTip, 等待 QTTabBar 安装
         ControlGet, button_enable, Enabled ,, WindowsForms10.BUTTON.app.0.141b42a_r6_ad11
     }
 
     ; 关闭窗口
     WinClose ahk_pid %OutputVarPID%
+
+    ToolTip, 启动 QTTabBar
     
     ; EnvGet, USERPROFILE, USERPROFILE
     ; SetTitleMatchMode,2
     RunWait, explorer , , , OutputVarPID
     ; WinWaitActive ahk_pid %OutputVarPID% 
 
-    Sleep, 1000
+    Sleep, 2000
     SendInput  {Alt}
-    Sleep, 1000
+    Sleep, 2000
     SendInput  {V}
     Sleep, 1000
     SendInput,  {Y}
@@ -328,6 +352,7 @@ install_QTTabBar(){
     SendInput  {Enter}
 
     Sleep, 1000
+    ToolTip, 启动 QTTabBar
     directory := A_ScriptDir "\software\QTTabBar" 
     Run, cscript launch.js , %directory%
 
