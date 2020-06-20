@@ -24,14 +24,14 @@ Gui Add, CheckBox, x143 y86 w107 h23 +Checked vSnipaste, Snipaste
 Gui Add, CheckBox, x143 y115 w107 h23 +Checked vScreenToGif, ScreenToGif
 Gui Add, GroupBox, x135 y153 w120 h58, 播放器
 Gui Add, CheckBox, x143 y176 w102 h23 +Checked vPotPlayer, Pot Player
-Gui Add, Text, x10 y222 w54 h23, 安装路径
-Gui Add, Edit, x65 y218 w135 h21 vPathSelector
-Gui Add, Button, x208 y214 w45 h27, 选择
-Gui Add, Button, x8 y244 w248 h23, 自动安装
+; Gui Add, Text, x10 y222 w54 h23, 安装路径
+; Gui Add, Edit, x65 y218 w135 h21 vPathSelector
+; Gui Add, Button, x208 y214 w45 h27, 选择
+Gui Add, Button, x8 y222 w248 h23, 自动安装
 
-Gui Show, w260 h272, 自动安装 - 界面
+Gui Show, w260 h252, 自动安装 - 界面
 ; 设置默认安装路径
-GuiControl,, PathSelector, %A_ScriptDir%
+; GuiControl,, PathSelector, %A_ScriptDir%
 Return
 
 GuiEscape:
@@ -44,41 +44,45 @@ Button自动安装:
     
     ; Run, explorer.exe
 
-    if (Listary = 1){
-        install_Listary()
+    
+    if (Snipaste = 1){
+        install_Snipaste()
     }
     
     if (QTTabBar = 1){
         install_QTTabBar()
-
     }
-    
+
     if (Ditto = 1){
-
-    }
-    
-    if (WGesture = 1){
-
+        install_Ditto()
     }
     
     if (Quicker = 1){
-
+        install_Quicker()
     }
     
     if (TencentDesktop = 1){
-
+        install_TencentDesktop()
     }
     
     if (VScode = 1){
-
+        install_VScode()
     }
     
     if (ScreenToGif = 1){
-
+        install_ScreenToGif()
     }
     
     if (PotPlayer = 1){
+        install_PotPlayer()
+    }
 
+    if (WGesture = 1){
+        install_WGesture()
+    }
+
+    if (Listary = 1){
+        install_Listary()
     }
 
     return
@@ -99,8 +103,174 @@ install_Listary(){
         return
     }
 
-    ; MsgBox %install_path%
+    install_cmd := install_path " /VERYSILENT" 
+    Run, %install_cmd%
 }
+
+; WGesture 安装操作
+install_WGesture(){
+    install_path := A_ScriptDir "\software\Install WGestures.msi"
+
+    ; 判断安装包是否存在
+    if !FileExist(install_path){
+        MsgBox, "Install WGestures.msi not exists"
+        return
+    }
+
+    install_cmd := install_path " /passive" 
+    Run, %install_cmd%
+    WinWait, 安全警告, , 3
+    ControlClick, 是 , 安全警告
+    SendInput,  {Y}
+}
+
+; Quicker 安装操作
+install_Quicker(){
+    install_path := A_ScriptDir "\software\Quicker.x64.1.8.0.0.msi"
+
+    ; 判断安装包是否存在
+    if !FileExist(install_path){
+        MsgBox, "Quicker.x64.1.8.0.0.msi not exists"
+        return
+    }
+
+    install_cmd := install_path " /passive" 
+    Run, %install_cmd%
+}
+
+; Ditto 安装操作
+install_Ditto(){
+    install_path := A_ScriptDir "\software\DittoSetup_64bit_3_22_88_0.exe"
+
+    ; 判断安装包是否存在
+    if !FileExist(install_path){
+        MsgBox, "DittoSetup_64bit_3_22_88_0.exe not exists"
+        return
+    }
+
+    install_cmd := install_path " /VERYSILENT" 
+    Run, %install_cmd%
+}
+
+; VScode 安装操作
+install_VScode(){
+    install_path := A_ScriptDir "\software\VSCodeUserSetup-x64-1.46.0.exe"
+
+    ; 判断安装包是否存在
+    if !FileExist(install_path){
+        MsgBox, "VSCodeUserSetup-x64-1.46.0.exe not exists"
+        return
+    }
+
+    install_cmd := install_path " /VERYSILENT" 
+    Run, %install_cmd%
+}
+
+; ScreenToGif 安装操作
+install_ScreenToGif(){
+    install_path := A_ScriptDir "\software\ScreenToGif.2.25.Setup.msi"
+
+    ; 判断安装包是否存在
+    if !FileExist(install_path){
+        MsgBox, "ScreenToGif.2.25.Setup.msi not exists"
+        return
+    }
+
+    install_cmd := install_path " /passive" 
+    Run, %install_cmd%
+}
+
+; 腾讯桌面管理 安装操作
+install_TencentDesktop(){
+    install_path := A_ScriptDir "\software\DeskGo_2_9_1051_127_lite.exe"
+
+    ; 判断安装包是否存在
+    if !FileExist(install_path){
+        MsgBox, "DeskGo_2_9_1051_127_lite.exe not exists"
+        return
+    }
+
+    install_cmd := install_path
+    Run, %install_cmd%
+}
+
+; PotPlayer 安装操作
+install_PotPlayer(){
+    install_path := A_ScriptDir "\software\PotPlayerSetup64-200512-ads.exe"
+
+    ; 判断安装包是否存在
+    if !FileExist(install_path){
+        MsgBox, "PotPlayerSetup64-200512-ads.exe not exists"
+        return
+    }
+
+    install_cmd := install_path
+    Run, %install_cmd%
+    WinWait, Installer Language, , 3
+    SendInput,{Enter}
+    ; ControlClick, OK , Installer Language
+    SetTitleMatchMode, 1
+    Sleep, 2000
+    WinWait, PotPlayer-64 bit 安装
+    SendInput,{Enter}
+    SendInput,{Enter}
+    SendInput,{Enter}
+    Loop, 10
+    {
+        Sleep, 200
+        ControlClick, 安装 , PotPlayer-64 bit 安装
+    }
+
+    ; ; 等待 关闭 按钮激活
+    ; Sleep, 2000
+    while (WinExist(PotPlayer-64 bit 安装)) {
+        Sleep, 500
+        ; ControlGet, button_enable, Visible ,,  ClassNN Button2
+        ControlClick, 关闭 , PotPlayer-64 bit 安装
+    }
+
+}
+
+; 解压 zip
+Unz(sZip, sUnz)
+{
+    fso := ComObjCreate("Scripting.FileSystemObject")
+    If Not fso.FolderExists(sUnz)  ;http://www.autohotkey.com/forum/viewtopic.php?p=402574
+       fso.CreateFolder(sUnz)
+    psh  := ComObjCreate("Shell.Application")
+    zippedItems := psh.Namespace( sZip ).items().count
+    psh.Namespace( sUnz ).CopyHere( psh.Namespace( sZip ).items, 4|16 )
+    Loop {
+        sleep 50
+        unzippedItems := psh.Namespace( sUnz ).items().count
+        ToolTip Unzipping in progress..
+        IfEqual,zippedItems,%unzippedItems%
+            break
+    }
+    ToolTip
+}
+
+install_Snipaste(){
+    install_path := A_ScriptDir "\software\Snipaste-2.3.5-Beta-x64.zip"
+    ; 判断安装包是否存在
+    if !FileExist(install_path){
+        MsgBox, "Snipaste-2.3.5-Beta-x64.zip not exists"
+        return
+    }
+    EnvGet, APPDATA, APPDATA
+    install_directory := APPDATA "\Snipaste"
+    if !FileExist(install_path)
+        FileCreateDir, %install_directory%
+    Sleep, 100
+    Unz(install_path,install_directory)
+    Snipaste_exe := install_directory "\Snipaste.exe"
+    Run, %Snipaste_exe%
+    
+    ; ; 创建自启动 lnk
+    ; startup_directory := APPDATA "\Microsoft\Windows\Start Menu\Programs\Startup"
+    ; FileCreateShortcut, %Snipaste_exe%, %startup_directory%\Snipaste.lnk
+}
+
 
 install_QTTabBar(){
     QTTabBar_exe := A_ScriptDir "\software\QTTabBar\QTTabBar.exe"
@@ -129,28 +299,38 @@ install_QTTabBar(){
     WinWait ahk_pid %OutputVarPID%
     Send {Enter}
 
+    Sleep, 500
     ; 等待 OK 按钮激活
     button_enable := 0
     while (button_enable = 0) {
-        Sleep, 100
+        Sleep, 200
         ControlGet, button_enable, Enabled ,, WindowsForms10.BUTTON.app.0.141b42a_r6_ad11
     }
 
     ; 关闭窗口
     WinClose ahk_pid %OutputVarPID%
+    
+    ; EnvGet, USERPROFILE, USERPROFILE
+    ; SetTitleMatchMode,2
+    RunWait, explorer , , , OutputVarPID
+    ; WinWaitActive ahk_pid %OutputVarPID% 
 
-    Run, explorer , , , OutputVarPID
-    WinWait ahk_pid %OutputVarPID%
+    Sleep, 1000
+    SendInput  {Alt}
+    Sleep, 1000
+    SendInput  {V}
+    Sleep, 1000
+    SendInput,  {Y}
+    Sleep, 1000
+    SendInput  {down}
+    SendInput  {down}
+    SendInput  {down}
+    SendInput  {Enter}
 
-    Send {alt}
-    Send {V}
-    Send {Y}
-    Send {down}
-    Send {down}
-    Send {down}
-    Send {Enter}
+    Sleep, 1000
+    directory := A_ScriptDir "\software\QTTabBar" 
+    Run, cscript launch.js , %directory%
 
-    ; MsgBox, "window active"
 }
 
 
